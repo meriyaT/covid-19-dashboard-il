@@ -1,0 +1,44 @@
+{
+  "name": "covid-19-dashboard-il",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clear-build-cache": "rm -rf .cache/ dist/",
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html",
+    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "lint": "eslint \"src/**/*.{js,jsx}\" --quiet",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meriyaT/covid-19-dashboard-il.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meriyaT/covid-19-dashboard-il/issues"
+  },
+  "homepage": "https://github.com/meriyaT/covid-19-dashboard-il#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "d3": "^5.16.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "mapbox-gl": "^1.11.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "resize-observer-polyfill": "^1.5.1"
+  },
+  "browserslist": [
+    "last 2 Chrome versions"
+  ]
+}
