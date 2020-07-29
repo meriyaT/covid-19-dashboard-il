@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+    - name: npm install and build
+      run: |
+        npm install
+        npm run build -- --public-url /covid-19-dashboard-il/
+    - name: Deploy site to gh-pages branch
+      uses: crazy-max/ghaction-github-pages@v1.4.0
+      env:
+        GITHUB_PAT: ${{ secrets.PAT }}
+      with:
+        build_dir: ./dist      
