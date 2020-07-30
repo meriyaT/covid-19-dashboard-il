@@ -36,13 +36,37 @@ h4 {
   display: flex;
   flex-direction: column;
   background: white;
-  justify-content: space-around;
 }
+
 .todayData {
   display: flex;
+  flex-direction: column;
+  align-items: baseline;
   background: white;
-  justify-content: space-around;
   margin-top: 15px;
+}
+
+.mapbox-map {
+  width: 40vw;
+  height: 30vh;
+  margin-bottom: 15px;
+  align-self: center;
+}
+
+@media only screen and (min-device-width: 768px) {
+  .today {
+    justify-content: space-around;
+  }
+  .todayData {
+    justify-content: space-around;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .mapbox-map {
+    width: 35vw;
+    height: 50vh;
+    margin-bottom: 15px;
+  }
 }
 .dateStateData {
   display: flex;

@@ -3,11 +3,11 @@ import * as d3 from "d3";
 import { AxisLeft } from "./AxisLeft";
 import { AxisBottom } from "./AxisBottom";
 import { Bar } from "./Bar";
+import { useChartDimensions, useUniqueId } from "./../utils";
 
 const styles = {
   zIndex: 1000,
   backgroundColor: "white",
-  border: "1px solid gray",
 };
 
 export const BarPlot = ({
@@ -23,10 +23,11 @@ export const BarPlot = ({
   bottomAxisTitle = "Bottom Axis Title",
   onSelectItem,
 }) => {
+  const [ref, dimensions] = useChartDimensions();
   if (!data) {
     return <pre>Loading...</pre>;
   }
-
+  /*
   const margin = {
     left: `${svgWidth * 0.12}`,
     right: `${svgWidth * 0.06}`,
@@ -35,7 +36,7 @@ export const BarPlot = ({
   };
   const chartWidth = svgWidth - margin.right - margin.left;
   const chartHeight = svgHeight - margin.top - margin.bottom;
-
+*/
   //domain array length doesn't include 0 index 1 ... n, range array includes all elements 0 ... n
   const colorScale = d3
     .scaleThreshold()
@@ -46,74 +47,85 @@ export const BarPlot = ({
 
   const xScale = d3
     .scaleBand()
-    .range([0, chartWidth])
+    .range([0, dimensions.boundedWidth])
     .padding(0.1)
     .domain(data.map((d) => d.county_name));
   const yScale = d3
     .scaleLinear()
-    .range([chartHeight, 0])
+    .range([dimensions.boundedHeight, 0])
     .domain([0, d3.max(data.map((d) => parseInt(d.positives_today)))])
     .nice();
 
   const minHeight = 2.5; //set a minHeight for a bar so that it is selectable
 
   return (
-    <svg width={svgWidth} height={svgHeight} style={styles}>
-      <g>
-        <text
-          style={{ textAnchor: "middle" }}
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize={chartWidth * 0.035}
-          x={svgWidth / 2}
-          y={svgHeight * 0.08}
+    <div className="barPlot" ref={ref}>
+      <svg width={svgWidth} height={svgHeight} style={styles}>
+        <g>
+          <text
+            style={{ textAnchor: "middle" }}
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontSize={dimensions.boundedWidth * 0.035}
+            x={svgWidth / 2}
+            y={svgHeight * 0.08}
+          >
+            {visualizationTitle}
+          </text>
+        </g>
+        <g
+          transform={`translate(${dimensions.marginLeft},${
+            dimensions.marginTop - 20
+          })`}
         >
-          {visualizationTitle}
-        </text>
-      </g>
-      <g transform={`translate(${margin.left},${margin.top})`}>
-        {data.map((d, i) => (
-          <React.Fragment key={`barFrag${d.county_name}`}>
-            <Bar
-              id={d}
-              x={xScale(d.county_name)}
-              y={
-                chartHeight - yScale(parseInt(d.positives_today)) > minHeight
-                  ? yScale(parseInt(d.positives_today))
-                  : chartHeight - minHeight
-              }
-              itemDelay={itemDelay * (i + 1)}
-              width={xScale.bandwidth()}
-              height={
-                chartHeight - yScale(parseInt(d.positives_today)) > minHeight
-                  ? chartHeight - yScale(parseInt(d.positives_today))
-                  : minHeight
-              }
-              color={colorScale(parseInt(d.positives_today))}
-              highlightLineColor={highlightLineColor}
-              chartHeight={chartHeight}
-              onSelectItem={onSelectItem}
-              margin={margin}
-            />
-          </React.Fragment>
-        ))}
+          {data.map((d, i) => (
+            <React.Fragment key={`barFrag${d.county_name}`}>
+              <Bar
+                id={d}
+                x={xScale(d.county_name)}
+                y={
+                  dimensions.boundedHeight -
+                    yScale(parseInt(d.positives_today)) >
+                  minHeight
+                    ? yScale(parseInt(d.positives_today))
+                    : dimensions.boundedHeight - minHeight
+                }
+                itemDelay={itemDelay * (i + 1)}
+                width={xScale.bandwidth()}
+                height={
+                  dimensions.boundedHeight -
+                    yScale(parseInt(d.positives_today)) >
+                  minHeight
+                    ? dimensions.boundedHeight -
+                      yScale(parseInt(d.positives_today))
+                    : minHeight
+                }
+                color={colorScale(parseInt(d.positives_today))}
+                highlightLineColor={highlightLineColor}
+                chartHeight={dimensions.boundedHeight}
+                onSelectItem={onSelectItem}
+                dimensions={dimensions}
+              />
+            </React.Fragment>
+          ))}
 
-        <AxisLeft
-          yScale={yScale}
-          chartHeight={chartHeight}
-          chartWidth={chartWidth}
-          yAxisTitle={leftAxisTitle}
-        />
+          <AxisLeft
+            yScale={yScale}
+            chartHeight={dimensions.boundedHeight}
+            chartWidth={dimensions.boundedWidth}
+            yAxisTitle={leftAxisTitle}
+          />
 
-        <AxisBottom
-          chartHeight={chartHeight}
-          chartWidth={chartWidth}
-          tickWidth={5}
-          xScale={xScale}
-          types={data.map((a) => a.county_name)}
-          tiltXLabels={tiltXLabels}
-          xAxisTitle={bottomAxisTitle}
-        />
-      </g>
-    </svg>
+          <AxisBottom
+            chartHeight={dimensions.boundedHeight}
+            chartWidth={dimensions.boundedWidth}
+            tickWidth={5}
+            xScale={xScale}
+            types={data.map((a) => a.county_name)}
+            tiltXLabels={tiltXLabels}
+            xAxisTitle={bottomAxisTitle}
+          />
+        </g>
+      </svg>
+    </div>
   );
 };

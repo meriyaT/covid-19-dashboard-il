@@ -5,8 +5,6 @@ export const Bar = ({
   id,
   x,
   y,
-  xScale,
-  yScale,
   chartHeight,
   width,
   height,
@@ -14,7 +12,7 @@ export const Bar = ({
   highlightLineColor = { rgba: [255, 102, 0, 1] },
   itemDelay,
   onSelectItem,
-  margin,
+  dimensions,
 }) => {
   const barRef = useRef(null);
 
@@ -51,15 +49,8 @@ export const Bar = ({
         .select("#tooltip-bar-value")
         .text(["Tested positive", id.positives_today].join(" "));
 
-      const tooltipX = x + parseInt(margin.left) + 115;
-      const tooltipY = y + parseInt(margin.top) + 170;
-      /*     tooltip.style(
-        "transform",
-        `translate(` +
-          `calc( -50% + ${tooltipX}px),` +
-          `calc(-100% + ${tooltipY}px)` +
-          `)`
-      );*/
+      const tooltipX = x + parseInt(dimensions.marginLeft) + 130;
+      const tooltipY = y + parseInt(dimensions.marginTop) + 170;
 
       tooltip.style(
         "transform",

@@ -44,14 +44,14 @@ const App = () => {
 
   const [data, setData] = useState([]);
   const [location, setLocation] = useState({});
-  const [todayDate, setToday] = useState(new Date("2020-07-27"));
+  const [todayDate, setToday] = useState(new Date());
   const [todayIllinoisData, setTodayIllinoisData] = useState({});
   const [todayCountyData, setTodayCountyData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
 
   const getTodayData = async () => {
     let res = await fetch(
-      `https://h9ml0v7oy9.execute-api.us-west-2.amazonaws.com/beta/county?date=2020-07-28`
+      `https://h9ml0v7oy9.execute-api.us-west-2.amazonaws.com/beta/county`
     );
 
     let results = await res.json();
@@ -72,6 +72,7 @@ const App = () => {
     setLocation(zipCityCountyObj);
   };
 
+  const barPlotTitle = `County Breakdown of Covid cases ${todayDate.toLocaleDateString()}`;
   return (
     <div className="App">
       <h1>Covid Dashboard</h1>
@@ -93,14 +94,14 @@ const App = () => {
             </div>
             <BarPlot
               data={todayCountyData.slice(0, 20)}
-              svgWidth={600}
-              svgHeight={400}
+              svgWidth={500}
+              svgHeight={300}
               itemDelay={200}
               onSelectItem={setSelectedId}
               colorBreaks={color_breaks()}
               highlightLineColor={{ rgba: [255, 102, 0, 1] }}
               tiltXLabels={true}
-              visualizationTitle="County Breakdown of Covid cases today"
+              visualizationTitle={barPlotTitle}
               leftAxisTitle="Positive Cases"
               bottomAxisTitle="County"
             />
@@ -120,7 +121,7 @@ const App = () => {
         </div>
       )}
 
-      {/* <ZipcodeTypeahead
+      <ZipcodeTypeahead
         zipcodeCityCountyList={zipcodeCityCountyList}
         onSelected={onSelected}
       />
@@ -132,18 +133,18 @@ const App = () => {
           labelY="Total Covid Cases"
           labelX="Date"
         />
-            <Timeline
+        {/*<Timeline
           data={data.dailyCasesTimeline}
           xAccessor={dateAccessor}
           yAccessor={temperatureAccessor}
           labelY="Daily Number of Covid Cases"
         />*/}
-      {/* <Histogram
+        {/* <Histogram
           data={data.scatter}
           xAccessor={humidityAccessor}
           label="Daily Covid Cases"
-        />
-      </div>*/}
+        />*/}
+      </div>
     </div>
   );
 };

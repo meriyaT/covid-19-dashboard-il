@@ -2,11 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const styles = {
-  width: "35vw", //https://itnext.io/viewport-units-the-css-you-didnt-know-about-but-should-24b104483429
-  height: "50vh",
-  marginBottom: "15px",
-};
 const IllinoisBoundingBox = [
   [-94.30530163755736, 36.74643211733368],
   [-83.39230352848888, 42.63997206897545],
@@ -114,7 +109,6 @@ export const MapboxGLMap = ({
       });
 
       setStatefulMap(mapboxGlMap);
-      console.log("mapStateful set in state");
     });
   };
 
@@ -122,13 +116,7 @@ export const MapboxGLMap = ({
     if (!statefulMap) {
       initMap();
     } else {
-      console.log(
-        "useEffect running! statefulMap or selectedId must have changed."
-      );
       if (selectedId) {
-        console.log(
-          `selectedId is not null, highlight selectedId: ${selectedId}`
-        );
         statefulMap.setPaintProperty("aoi-highlight", "line-color", [
           "case",
           ["==", ["get", "COUNTY_NAM"], selectedId.county_name.toUpperCase()],
@@ -145,5 +133,5 @@ export const MapboxGLMap = ({
     }
   }, [statefulMap, selectedId]);
 
-  return <div style={styles} ref={mapContainer} />;
+  return <div className="mapbox-map" ref={mapContainer} />;
 };
