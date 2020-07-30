@@ -19,7 +19,17 @@ export const Bar = ({
   const barRef = useRef(null);
 
   const tooltip = d3.select("#today-bar-tooltip");
-  let positives_metric = showTodayData ? "positives_today" : "positives_total";
+  let metric = showTodayData
+    ? {
+        positives: "positives_today",
+        tested: "tested_today",
+        deaths: "deaths_today",
+      }
+    : {
+        positives: "positives_total",
+        tested: "tested_total",
+        deaths: "deaths_total",
+      };
 
   const setHighlight = (el, highlighted) => {
     if (highlighted) {
@@ -47,21 +57,29 @@ export const Bar = ({
       onSelectItem(id);
       setHighlight(el, true);
       tooltip.style("opacity", 1);
-      tooltip.select("#title").text([id.county_name, "county"].join(" "));
-      tooltip
-        .select("#tooltip-bar-value")
-        .text(["Tested positive", id[positives_metric]].join(" "));
+      tooltip.select("#title").text([id.county_name]);
+      let tooltopContent = `
+      <table>
+        <tr>
+          <th>Tested positive</th>
+          <td>${id[metric.positives]}</td>
+        </tr>
+        <tr>
+        <th>Number of tests</th>
+        <td>${id[metric.tested]}</td>
+      </tr>
+      <tr>
+      <th>Deaths</th>
+      <td>${id[metric.deaths]}</td>
+    </tr>
+      <table>`;
+      tooltip.select("#tooltip-bar-value").html(tooltopContent);
 
       let tooltipX = x + parseInt(dimensions.marginLeft);
       let tooltipY = y + parseInt(dimensions.marginTop);
 
-      if (isMobile) {
-        tooltipX = tooltipX + 45;
-        tooltipY = tooltipY + 170;
-      } else {
-        tooltipX = tooltipX + 130;
-        tooltipY = tooltipY + 170;
-      }
+      tooltipX = tooltipX + 30;
+      tooltipY = tooltipY + 70;
       tooltip.style(
         "transform",
         `translate(` +
