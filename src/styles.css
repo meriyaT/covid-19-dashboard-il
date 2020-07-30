@@ -51,6 +51,9 @@ h4 {
   align-self: center;
 }
 
+.mapboxgl-popup-content {
+  padding-bottom: 5px;
+}
 @media only screen and (min-device-width: 768px) {
   .today {
     justify-content: space-around;
@@ -65,6 +68,9 @@ h4 {
     height: 50vh;
     margin-bottom: 15px;
   }
+}
+p {
+  margin: 0;
 }
 .dateStateData {
   display: flex;

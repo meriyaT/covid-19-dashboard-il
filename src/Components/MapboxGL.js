@@ -89,7 +89,7 @@ export const MapboxGLMap = ({
 
         const feature = e.features[0];
 
-        const popupContent = `
+        let popupContent = `
                 <h2>${feature.properties.COUNTY_NAM} ${
           feature.properties.County === "Chicago" ? "" : "county"
         }</h2>
@@ -100,6 +100,13 @@ export const MapboxGLMap = ({
                   </tr>
                 <table>
               `;
+        if (isMobile) {
+          popupContent = `<p>${feature.properties.COUNTY_NAM} ${
+            feature.properties.County === "Chicago" ? "" : "county"
+          }</p><span>Tested positive ${
+            feature.properties.COVID_CASES_TODAY
+          }</span>`;
+        }
         popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(mapboxGlMap);
       });
 
