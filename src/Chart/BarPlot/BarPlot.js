@@ -21,6 +21,7 @@ export const BarPlot = ({
   leftAxisTitle = "Left Axis Title",
   bottomAxisTitle = "Bottom Axis Title",
   onSelectItem,
+  showTodayData,
 }) => {
   const [ref, dimensions] = useChartDimensions();
   if (!data) {
@@ -49,10 +50,12 @@ export const BarPlot = ({
     .range([0, dimensions.boundedWidth])
     .padding(0.1)
     .domain(data.map((d) => d.county_name));
+
+  let positives_metric = showTodayData ? "positives_today" : "positives_total";
   const yScale = d3
     .scaleLinear()
     .range([dimensions.boundedHeight, 0])
-    .domain([0, d3.max(data.map((d) => parseInt(d.positives_today)))])
+    .domain([0, d3.max(data.map((d) => parseInt(d[positives_metric])))])
     .nice();
 
   const minHeight = 2.5; //set a minHeight for a bar so that it is selectable
@@ -83,26 +86,27 @@ export const BarPlot = ({
                 x={xScale(d.county_name)}
                 y={
                   dimensions.boundedHeight -
-                    yScale(parseInt(d.positives_today)) >
+                    yScale(parseInt(d[positives_metric])) >
                   minHeight
-                    ? yScale(parseInt(d.positives_today))
+                    ? yScale(parseInt(d[positives_metric]))
                     : dimensions.boundedHeight - minHeight
                 }
-                itemDelay={itemDelay * (i + 1)}
+                itemDelay={0}
                 width={xScale.bandwidth()}
                 height={
                   dimensions.boundedHeight -
-                    yScale(parseInt(d.positives_today)) >
+                    yScale(parseInt(d[positives_metric])) >
                   minHeight
                     ? dimensions.boundedHeight -
-                      yScale(parseInt(d.positives_today))
+                      yScale(parseInt(d[positives_metric]))
                     : minHeight
                 }
-                color={colorScale(parseInt(d.positives_today))}
+                color={colorScale(parseInt(d[positives_metric]))}
                 highlightLineColor={highlightLineColor}
                 chartHeight={dimensions.boundedHeight}
                 onSelectItem={onSelectItem}
                 dimensions={dimensions}
+                showTodayData={showTodayData}
               />
             </React.Fragment>
           ))}

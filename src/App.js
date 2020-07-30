@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import "semantic-ui-css/semantic.min.css";
 
 import * as d3 from "d3";
 import Timeline from "./Timeline";
-import IllinoisMap from "./Chart/Map";
 import ZipcodeTypeahead from "./Components/ZipcodeTypeahead";
-import CountyBreakdownTable from "./Components/CountyBreakdownTable";
-import IllinoisBreakdown from "./Components/IllinoisBreakdown";
+import Tabs from "./Components/Tabs";
 
 import zipcodeCityCountyList from "./utils/zipcodes";
 import { getTimelineData } from "./utils/data";
-import { il_county_covid_geo_data, color_breaks } from "./MapData/MapData";
-import { MapboxGLMap } from "./Components/MapboxGL";
-import { BarPlot } from "./Chart/BarPlot/BarPlot";
 
 import "./styles.css";
 import { set } from "d3";
@@ -47,7 +43,6 @@ const App = () => {
   const [todayDate, setToday] = useState(new Date());
   const [todayIllinoisData, setTodayIllinoisData] = useState({});
   const [todayCountyData, setTodayCountyData] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
 
   const getTodayData = async () => {
     let res = await fetch(
@@ -72,54 +67,15 @@ const App = () => {
     setLocation(zipCityCountyObj);
   };
 
-  const barPlotTitle = `County Breakdown of Covid cases ${todayDate.toLocaleDateString()}`;
   return (
     <div className="App">
       <h1>Covid Dashboard</h1>
-      {Object.keys(todayIllinoisData).length !== 0 &&
-      todayCountyData.length > 0 ? (
-        <div className="today">
-          <div className="dateStateData">
-            <CountyBreakdownTable
-              header="State"
-              countyBreakdown={todayIllinoisData}
-            />
-          </div>
-          <div className="todayData">
-            <div id="today-bar-tooltip" className="today-bar-tooltip">
-              <div className="tooltip-title" id="title"></div>
-              <div className="tooltip-bar-value">
-                <span id="tooltip-bar-value"></span>
-              </div>
-            </div>
-            <BarPlot
-              data={todayCountyData.slice(0, 20)}
-              svgWidth={500}
-              svgHeight={300}
-              itemDelay={200}
-              onSelectItem={setSelectedId}
-              colorBreaks={color_breaks()}
-              highlightLineColor={{ rgba: [255, 102, 0, 1] }}
-              tiltXLabels={true}
-              visualizationTitle={barPlotTitle}
-              leftAxisTitle="Positive Cases"
-              bottomAxisTitle="County"
-            />
-            <MapboxGLMap
-              data={il_county_covid_geo_data(todayCountyData)}
-              colorBreaks={color_breaks()}
-              highlightLineColor={{ rgba: [255, 102, 0, 1] }}
-              coordinates={[-88.7, 42.49]}
-              zoom={6}
-              selectedId={selectedId}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="loader-msg">
-          <h4>Fetching today's data...</h4>
-        </div>
-      )}
+      <Tabs
+        illinoisData={todayIllinoisData}
+        countyData={todayCountyData}
+        todayDate={todayDate}
+      />
+
       {/*}
       <ZipcodeTypeahead
         zipcodeCityCountyList={zipcodeCityCountyList}

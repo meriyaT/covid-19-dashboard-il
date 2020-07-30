@@ -4,8 +4,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { isMobile } from "react-device-detect";
 
 const IllinoisBoundingBox = [
-  [-94.30530163755736, 36.74643211733368],
-  [-83.39230352848888, 42.63997206897545],
+  [-91.883607, 42.991607],
+  [-87.220299, 36.704043],
 ];
 
 export const MapboxGLMap = ({
@@ -15,6 +15,7 @@ export const MapboxGLMap = ({
   highlightLineColor = { rgba: [255, 102, 0, 1] },
   coordinates = [-88.7, 42.49],
   zoom = 6,
+  activeIndex,
 }) => {
   const mapContainer = useRef(null);
   const [statefulMap, setStatefulMap] = useState(null);
@@ -22,7 +23,7 @@ export const MapboxGLMap = ({
   const getFillColor = (colorBreaks) => {
     let fc = [];
     fc.push("step");
-    fc.push(["get", "COVID_CASES_TODAY"]);
+    fc.push(["get", "COVID_CASES"]);
     fc.push("rgba(0,0,0,0)");
     for (let colorBreak of colorBreaks) {
       fc.push(colorBreak.break);
@@ -33,6 +34,20 @@ export const MapboxGLMap = ({
 
     return fc;
   };
+
+  const updateMap = () => {
+    statefulMap.getSource("counties").setData(data);
+    if (colorBreaks) {
+      statefulMap.removeLayer("countiesSolidLayer");
+      statefulMap.addLayer({
+        id: "countiesSolidLayer",
+        source: "counties",
+        type: "fill",
+        paint: { "fill-color": getFillColor(colorBreaks) },
+      });
+    }
+  };
+
   const initMap = () => {
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWVyaXlhIiwiYSI6ImNrZDYzbnpkdjBrcXAyemxvZXQyZXJjbTkifQ.YzkSnFwg69LygFmBrXBcFg";
@@ -48,7 +63,6 @@ export const MapboxGLMap = ({
 
     mapboxGlMap.on("load", () => {
       mapboxGlMap.fitBounds(IllinoisBoundingBox);
-
       mapboxGlMap.addSource("counties", {
         type: "geojson",
         data,
@@ -90,22 +104,16 @@ export const MapboxGLMap = ({
         const feature = e.features[0];
 
         let popupContent = `
-                <h2>${feature.properties.COUNTY_NAM} ${
-          feature.properties.County === "Chicago" ? "" : "county"
-        }</h2>
+                <h2>${feature.properties.COUNTY_NAM}</h2>
                 <table>
                   <tr>
                     <th>Tested positive</th>
-                    <td>${feature.properties.COVID_CASES_TODAY}</td>
+                    <td>${feature.properties.COVID_CASES}</td>
                   </tr>
                 <table>
               `;
         if (isMobile) {
-          popupContent = `<p>${feature.properties.COUNTY_NAM} ${
-            feature.properties.County === "Chicago" ? "" : "county"
-          }</p><span>Tested positive ${
-            feature.properties.COVID_CASES_TODAY
-          }</span>`;
+          popupContent = `<p>${feature.properties.COUNTY_NAM}</p><span>Tested positive ${feature.properties.COVID_CASES}</span>`;
         }
         popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(mapboxGlMap);
       });
@@ -137,8 +145,11 @@ export const MapboxGLMap = ({
           "rgba(0,0,0,0)"
         );
       }
+      if (!selectedId && (activeIndex || activeIndex === 0)) {
+        updateMap();
+      }
     }
-  }, [statefulMap, selectedId]);
+  }, [statefulMap, selectedId, activeIndex, data]);
 
   return <div className="mapbox-map" ref={mapContainer} />;
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-const CountyBreakdownTable = ({ header, countyBreakdown }) => {
+const CountyBreakdownTable = ({ header, countyBreakdown, showTodayData }) => {
   const renderTableData = () => {
     return Array.isArray(countyBreakdown) ? (
       countyBreakdown.map((county) => {
@@ -19,12 +19,19 @@ const CountyBreakdownTable = ({ header, countyBreakdown }) => {
           </tr>
         );
       })
-    ) : (
+    ) : showTodayData ? (
       <tr key={countyBreakdown.county_name}>
         <td>{countyBreakdown.county_name}</td>
         <td>{countyBreakdown.positives_today}</td>
         <td>{countyBreakdown.tested_today}</td>
         <td>{countyBreakdown.deaths_today}</td>
+      </tr>
+    ) : (
+      <tr key={countyBreakdown.county_name}>
+        <td>{countyBreakdown.county_name}</td>
+        <td>{countyBreakdown.positives_total}</td>
+        <td>{countyBreakdown.tested_total}</td>
+        <td>{countyBreakdown.deaths_total}</td>
       </tr>
     );
   };

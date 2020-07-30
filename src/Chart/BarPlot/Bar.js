@@ -14,10 +14,12 @@ export const Bar = ({
   itemDelay,
   onSelectItem,
   dimensions,
+  showTodayData,
 }) => {
   const barRef = useRef(null);
 
   const tooltip = d3.select("#today-bar-tooltip");
+  let positives_metric = showTodayData ? "positives_today" : "positives_total";
 
   const setHighlight = (el, highlighted) => {
     if (highlighted) {
@@ -48,7 +50,7 @@ export const Bar = ({
       tooltip.select("#title").text([id.county_name, "county"].join(" "));
       tooltip
         .select("#tooltip-bar-value")
-        .text(["Tested positive", id.positives_today].join(" "));
+        .text(["Tested positive", id[positives_metric]].join(" "));
 
       let tooltipX = x + parseInt(dimensions.marginLeft);
       let tooltipY = y + parseInt(dimensions.marginTop);
@@ -81,7 +83,6 @@ export const Bar = ({
       tooltip.style("opacity", 0);
     });
   });
-
   return (
     <rect
       ref={barRef}
