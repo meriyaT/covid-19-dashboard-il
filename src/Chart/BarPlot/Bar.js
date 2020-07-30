@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { isMobile } from "react-device-detect";
 
 export const Bar = ({
   id,
@@ -49,9 +50,16 @@ export const Bar = ({
         .select("#tooltip-bar-value")
         .text(["Tested positive", id.positives_today].join(" "));
 
-      const tooltipX = x + parseInt(dimensions.marginLeft) + 130;
-      const tooltipY = y + parseInt(dimensions.marginTop) + 170;
+      let tooltipX = x + parseInt(dimensions.marginLeft);
+      let tooltipY = y + parseInt(dimensions.marginTop);
 
+      if (isMobile) {
+        tooltipX = tooltipX + 45;
+        tooltipY = tooltipY + 170;
+      } else {
+        tooltipX = tooltipX + 130;
+        tooltipY = tooltipY + 170;
+      }
       tooltip.style(
         "transform",
         `translate(` +

@@ -120,7 +120,7 @@ const App = () => {
           <h4>Fetching today's data...</h4>
         </div>
       )}
-
+      {/*}
       <ZipcodeTypeahead
         zipcodeCityCountyList={zipcodeCityCountyList}
         onSelected={onSelected}
@@ -139,12 +139,12 @@ const App = () => {
           yAccessor={temperatureAccessor}
           labelY="Daily Number of Covid Cases"
         />*/}
-        {/* <Histogram
+      {/* <Histogram
           data={data.scatter}
           xAccessor={humidityAccessor}
           label="Daily Covid Cases"
-        />*/}
-      </div>
+        />
+      </div>*/}
     </div>
   );
 };

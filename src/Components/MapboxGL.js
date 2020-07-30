@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { isMobile } from "react-device-detect";
 
 const IllinoisBoundingBox = [
   [-94.30530163755736, 36.74643211733368],
@@ -32,7 +33,6 @@ export const MapboxGLMap = ({
 
     return fc;
   };
-
   const initMap = () => {
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWVyaXlhIiwiYSI6ImNrZDYzbnpkdjBrcXAyemxvZXQyZXJjbTkifQ.YzkSnFwg69LygFmBrXBcFg";
@@ -40,7 +40,7 @@ export const MapboxGLMap = ({
     const mapboxGlMap = new mapboxgl.Map({
       container: mapContainer.current,
       style: `mapbox://styles/mapbox/light-v10`,
-      center: coordinates,
+      scrollZoom: true,
       zoom: zoom,
     });
     mapboxGlMap.addControl(new mapboxgl.NavigationControl());

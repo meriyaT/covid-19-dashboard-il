@@ -7,7 +7,6 @@ import { useChartDimensions, useUniqueId } from "./../utils";
 
 const styles = {
   zIndex: 1000,
-  backgroundColor: "white",
 };
 
 export const BarPlot = ({

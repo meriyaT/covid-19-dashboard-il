@@ -35,20 +35,18 @@ h4 {
 .today {
   display: flex;
   flex-direction: column;
-  background: white;
 }
 
 .todayData {
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  background: white;
   margin-top: 15px;
 }
 
 .mapbox-map {
-  width: 40vw;
-  height: 30vh;
+  width: 50vw;
+  height: 50vh;
   margin-bottom: 15px;
   align-self: center;
 }
