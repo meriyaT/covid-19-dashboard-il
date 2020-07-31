@@ -55,7 +55,6 @@ export const MapboxGLMap = ({
     const mapboxGlMap = new mapboxgl.Map({
       container: mapContainer.current,
       style: `mapbox://styles/mapbox/light-v10`,
-      scrollZoom: true,
       zoom: zoom,
     });
     mapboxGlMap.addControl(new mapboxgl.NavigationControl());
@@ -83,13 +82,15 @@ export const MapboxGLMap = ({
         type: "line",
         paint: { "line-color": "gray" },
       });
+
       mapboxGlMap.addLayer({
-        id: "aoi-highlight",
+        id: "county-highlight",
         source: "counties",
-        type: "line",
+        type: "fill",
         paint: {
-          "line-color": `rgba(65, 131, 215, 1)`,
-          "line-width": 3,
+          "fill-outline-color": "#7befb2",
+          "fill-color": "#7befb2",
+          "fill-opacity": 1,
         },
       });
       // Create a popup, but don't add it to the map yet.
@@ -103,6 +104,12 @@ export const MapboxGLMap = ({
 
         const feature = e.features[0];
 
+        mapboxGlMap.setPaintProperty("county-highlight", "fill-color", [
+          "case",
+          ["==", ["get", "COUNTY_NAM"], feature.properties.COUNTY_NAM],
+          `rgba(123, 239, 178, 1)`,
+          "rgba(0,0,0,0)",
+        ]);
         let popupContent = `
                 <h2>${feature.properties.COUNTY_NAM}</h2>
                 <table>
@@ -121,6 +128,11 @@ export const MapboxGLMap = ({
       mapboxGlMap.on("mouseleave", "countiesSolidLayer", function () {
         mapboxGlMap.getCanvas().style.cursor = "";
         popup.remove();
+        mapboxGlMap.setPaintProperty(
+          "county-highlight",
+          "fill-color",
+          "rgba(0,0,0,0)"
+        );
       });
 
       setStatefulMap(mapboxGlMap);
@@ -132,16 +144,16 @@ export const MapboxGLMap = ({
       initMap();
     } else {
       if (selectedId) {
-        statefulMap.setPaintProperty("aoi-highlight", "line-color", [
+        statefulMap.setPaintProperty("county-highlight", "fill-color", [
           "case",
           ["==", ["get", "COUNTY_NAM"], selectedId.county_name.toUpperCase()],
-          `rgba(65, 131, 215, 1)`,
+          `rgba(123, 239, 178, 1)`,
           "rgba(0,0,0,0)",
         ]);
       } else {
         statefulMap.setPaintProperty(
-          "aoi-highlight",
-          "line-color",
+          "county-highlight",
+          "fill-color",
           "rgba(0,0,0,0)"
         );
       }

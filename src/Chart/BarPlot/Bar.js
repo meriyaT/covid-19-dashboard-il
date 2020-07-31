@@ -34,11 +34,46 @@ export const Bar = ({
   const setHighlight = (el, highlighted) => {
     if (highlighted) {
       el.style("stroke-width", "3");
-      el.style("stroke", `rgba(65, 131, 215, 1)`);
+      el.style("stroke", `rgba(245, 171, 53, 1)`);
       el.style("cursor", "pointer");
     } else {
       el.style("stroke-width", "0");
     }
+  };
+
+  const showTooltip = () => {
+    tooltip.style("opacity", 1);
+    let tooltopContent = `
+    <h2>${id.county_name}</h2>
+    <table>
+      <tr>
+        <th>Tested positive</th>
+        <td><b>${id[metric.positives]}</b></td>
+      </tr>
+      <tr>
+      <th>Number of tests</th>
+      <td><b>${id[metric.tested]}</b></td>
+    </tr>
+    <tr>
+    <th>Deaths</th>
+    <td><b>${id[metric.deaths]}</b></td>
+  </tr>
+    <table>`;
+    tooltip.select("#tooltip-bar-value").html(tooltopContent);
+
+    let tooltipX = x + parseInt(dimensions.marginLeft);
+    let tooltipY = y + parseInt(dimensions.marginTop);
+
+    tooltipX = tooltipX + 30;
+    tooltipY = tooltipY + 70;
+    tooltip.style(
+      "transform",
+      `translate(` +
+        `calc( -50% + ${tooltipX}px),` +
+        `calc(-100% + ${tooltipY}px)` +
+        `)`
+    );
+    tooltip.style("opacity", 1);
   };
 
   useEffect(() => {
@@ -56,38 +91,7 @@ export const Bar = ({
     el.on("mouseenter", () => {
       onSelectItem(id);
       setHighlight(el, true);
-      tooltip.style("opacity", 1);
-      tooltip.select("#title").text([id.county_name]);
-      let tooltopContent = `
-      <table>
-        <tr>
-          <th>Tested positive</th>
-          <td>${id[metric.positives]}</td>
-        </tr>
-        <tr>
-        <th>Number of tests</th>
-        <td>${id[metric.tested]}</td>
-      </tr>
-      <tr>
-      <th>Deaths</th>
-      <td>${id[metric.deaths]}</td>
-    </tr>
-      <table>`;
-      tooltip.select("#tooltip-bar-value").html(tooltopContent);
-
-      let tooltipX = x + parseInt(dimensions.marginLeft);
-      let tooltipY = y + parseInt(dimensions.marginTop);
-
-      tooltipX = tooltipX + 30;
-      tooltipY = tooltipY + 70;
-      tooltip.style(
-        "transform",
-        `translate(` +
-          `calc( -50% + ${tooltipX}px),` +
-          `calc(-100% + ${tooltipY}px)` +
-          `)`
-      );
-      tooltip.style("opacity", 1);
+      showTooltip();
     });
 
     el.on("click", () => {
@@ -109,6 +113,7 @@ export const Bar = ({
       width={width}
       height={itemDelay > 0 ? 0 : height}
       fill={color}
+      className="rect-bar"
     />
   );
 };

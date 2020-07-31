@@ -14,8 +14,8 @@ import { isMobile } from "react-device-detect";
 const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const [selectedId, setSelectedId] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const barPlotTitleToday = `County Breakdown of Covid cases ${todayDate.toLocaleDateString()}`;
-  const barPlotTitleTotal = `County Breakdown of Total Covid cases`;
+  const barPlotTitleToday = `County Breakdown of Covid Cases ${todayDate.toLocaleDateString()}`;
+  const barPlotTitleTotal = `County Breakdown of Total Covid Cases`;
 
   let barPlotHeight = 400,
     barPlotWidth = 600;
