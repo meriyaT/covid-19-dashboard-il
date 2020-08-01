@@ -38,11 +38,19 @@ export const color_breaks_total = () => {
 
 export const il_county_covid_geo_data_today = (countyBreakdown) => {
   for (let f of il_geojson.features) {
+    f.properties.COVID_CASES = 0;
     for (let c of countyBreakdown) {
       if (f.properties.COUNTY_NAM === c.county_name.toUpperCase()) {
         c.positives_today > 0
-          ? (f.properties.COVID_CASES = parseInt(c.positives_today))
+          ? (f.properties.COVID_CASES =
+              f.properties.COVID_CASES + parseInt(c.positives_today))
           : (f.properties.COVID_CASES = 0);
+      }
+      if (f.properties.COUNTY_NAM === "COOK") {
+        if (c.county_name === "Chicago") {
+          f.properties.COVID_CASES =
+            f.properties.COVID_CASES + parseInt(c.positives_today);
+        }
       }
     }
   }
@@ -52,11 +60,20 @@ export const il_county_covid_geo_data_today = (countyBreakdown) => {
 
 export const il_county_covid_geo_data_total = (countyBreakdown) => {
   for (let f of il_geojson.features) {
+    f.properties.COVID_CASES = 0;
+
     for (let c of countyBreakdown) {
       if (f.properties.COUNTY_NAM === c.county_name.toUpperCase()) {
         c.positives_total > 0
-          ? (f.properties.COVID_CASES = parseInt(c.positives_total))
+          ? (f.properties.COVID_CASES =
+              f.properties.COVID_CASES + parseInt(c.positives_total))
           : (f.properties.COVID_CASES = 0);
+      }
+      if (f.properties.COUNTY_NAM === "COOK") {
+        if (c.county_name === "Chicago") {
+          f.properties.COVID_CASES =
+            f.properties.COVID_CASES + parseInt(c.positives_total);
+        }
       }
     }
   }

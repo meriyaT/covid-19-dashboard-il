@@ -55,6 +55,7 @@ export const MapboxGLMap = ({
     const mapboxGlMap = new mapboxgl.Map({
       container: mapContainer.current,
       style: `mapbox://styles/mapbox/light-v10`,
+      center: [-88.974268, 40.478307],
       zoom: zoom,
     });
     mapboxGlMap.addControl(new mapboxgl.NavigationControl());
@@ -83,16 +84,17 @@ export const MapboxGLMap = ({
         paint: { "line-color": "gray" },
       });
 
+      //Add a transperant color layer to highlight a county during mouseover event
       mapboxGlMap.addLayer({
         id: "county-highlight",
         source: "counties",
         type: "fill",
         paint: {
-          "fill-outline-color": "#7befb2",
-          "fill-color": "#7befb2",
-          "fill-opacity": 1,
+          "fill-outline-color": "rgba(103, 65, 114, 0)",
+          "fill-color": "rgba(103, 65, 114, 0)",
         },
       });
+
       // Create a popup, but don't add it to the map yet.
       let popup = new mapboxgl.Popup({
         closeButton: false,
@@ -107,7 +109,7 @@ export const MapboxGLMap = ({
         mapboxGlMap.setPaintProperty("county-highlight", "fill-color", [
           "case",
           ["==", ["get", "COUNTY_NAM"], feature.properties.COUNTY_NAM],
-          `rgba(123, 239, 178, 1)`,
+          "rgba(46, 49, 49, 1)",
           "rgba(0,0,0,0)",
         ]);
         let popupContent = `
@@ -147,7 +149,7 @@ export const MapboxGLMap = ({
         statefulMap.setPaintProperty("county-highlight", "fill-color", [
           "case",
           ["==", ["get", "COUNTY_NAM"], selectedId.county_name.toUpperCase()],
-          `rgba(123, 239, 178, 1)`,
+          "rgba(46, 49, 49, 1)",
           "rgba(0,0,0,0)",
         ]);
       } else {

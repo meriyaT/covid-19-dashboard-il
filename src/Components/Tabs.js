@@ -8,6 +8,7 @@ import {
   color_breaks_total,
 } from "./../MapData/MapData";
 import { MapboxGLMap } from "./MapboxGL";
+import { PositivityRates } from "./PositivityRates";
 import { BarPlot } from "./../Chart/BarPlot/BarPlot";
 import { isMobile } from "react-device-detect";
 
@@ -41,6 +42,8 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               showTodayData={showTodayData}
             />
           </div>
+          <h3 style={{ marginTop: "10px" }}>Positive Rates</h3>
+          <PositivityRates data={countyData} showTodayData={showTodayData} />
           <div className="todayData">
             <div id="today-bar-tooltip" className="today-bar-tooltip">
               <div className="tooltip-title" id="title"></div>
@@ -104,6 +107,16 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
         ),
     },
   ];
+
+  const renderPositivityGauges = () => {
+    return (
+      <Tab.Pane>
+        <div>
+          <PositivityRates data={countyData} />
+        </div>
+      </Tab.Pane>
+    );
+  };
   const handleTabChange = (e, { activeIndex }) => setActiveIndex(activeIndex);
   return (
     <Tab

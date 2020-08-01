@@ -68,10 +68,25 @@ h4 {
     margin-bottom: 15px;
   }
 }
+
+.positivity-gauge-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.Gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 p {
   margin: 0;
 }
-h2 {
+h2,
+h3 {
   margin: 0;
 }
 .dateStateData {

@@ -17,7 +17,7 @@ export const Bar = ({
   showTodayData,
 }) => {
   const barRef = useRef(null);
-
+  let tooltipX, tooltipY;
   const tooltip = d3.select("#today-bar-tooltip");
   let metric = showTodayData
     ? {
@@ -44,7 +44,7 @@ export const Bar = ({
   const showTooltip = () => {
     tooltip.style("opacity", 1);
     let tooltopContent = `
-    <h2>${id.county_name}</h2>
+    <h3>${id.county_name}</h3>
     <table>
       <tr>
         <th>Tested positive</th>
@@ -61,11 +61,16 @@ export const Bar = ({
     <table>`;
     tooltip.select("#tooltip-bar-value").html(tooltopContent);
 
-    let tooltipX = x + parseInt(dimensions.marginLeft);
-    let tooltipY = y + parseInt(dimensions.marginTop);
+    tooltipX = x + parseInt(dimensions.marginLeft);
+    tooltipY = y + parseInt(dimensions.marginTop);
+    if (isMobile) {
+      tooltipX = tooltipX + 18;
+      tooltipY = tooltipY + 900;
+    } else {
+      tooltipX = tooltipX + 30;
+      tooltipY = tooltipY + 250;
+    }
 
-    tooltipX = tooltipX + 30;
-    tooltipY = tooltipY + 70;
     tooltip.style(
       "transform",
       `translate(` +
