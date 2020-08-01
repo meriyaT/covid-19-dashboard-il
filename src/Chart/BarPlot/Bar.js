@@ -15,6 +15,7 @@ export const Bar = ({
   onSelectItem,
   dimensions,
   showTodayData,
+  activeAccordion,
 }) => {
   const barRef = useRef(null);
   let tooltipX, tooltipY;
@@ -64,11 +65,19 @@ export const Bar = ({
     tooltipX = x + parseInt(dimensions.marginLeft);
     tooltipY = y + parseInt(dimensions.marginTop);
     if (isMobile) {
-      tooltipX = tooltipX + 18;
-      tooltipY = tooltipY + 900;
+      if (activeAccordion === 0 || activeAccordion === -1) {
+        tooltipX = tooltipX + 18;
+        tooltipY = tooltipY + 950;
+      } else {
+        tooltipX = tooltipX + 18;
+        tooltipY = tooltipY + 180;
+      }
+    } else if (activeAccordion !== 0 || activeAccordion !== -1) {
+      tooltipX = tooltipX + 30;
+      tooltipY = tooltipY + 120;
     } else {
       tooltipX = tooltipX + 30;
-      tooltipY = tooltipY + 250;
+      tooltipY = tooltipY + 900;
     }
 
     tooltip.style(

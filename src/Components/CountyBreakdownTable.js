@@ -1,60 +1,48 @@
 import React from "react";
+import { Statistic } from "semantic-ui-react";
 
 const CountyBreakdownTable = ({ header, countyBreakdown, showTodayData }) => {
   const renderTableData = () => {
-    return Array.isArray(countyBreakdown) ? (
-      countyBreakdown.map((county) => {
-        const {
-          county_name,
-          deaths_today,
-          tested_today,
-          positives_today,
-        } = county;
-        return (
-          <tr key={county_name}>
-            <td>{county_name}</td>
-            <td>{positives_today}</td>
-            <td>{tested_today}</td>
-            <td>{deaths_today}</td>
-          </tr>
-        );
-      })
-    ) : showTodayData ? (
-      <tr key={countyBreakdown.county_name}>
-        <td>{countyBreakdown.county_name}</td>
-        <td>{countyBreakdown.positives_today}</td>
-        <td>{countyBreakdown.tested_today}</td>
-        <td>{countyBreakdown.deaths_today}</td>
-      </tr>
+    return showTodayData ? (
+      <Statistic.Group size="small">
+        <Statistic size="mini">
+          <Statistic.Value>{countyBreakdown.county_name}</Statistic.Value>
+        </Statistic>
+        <Statistic color="red">
+          <Statistic.Value>{countyBreakdown.positives_today}</Statistic.Value>
+          <Statistic.Label>Cases</Statistic.Label>
+        </Statistic>
+        <Statistic color="teal">
+          <Statistic.Value>{countyBreakdown.tested_today}</Statistic.Value>
+          <Statistic.Label>Tested</Statistic.Label>
+        </Statistic>
+        <Statistic color="grey">
+          <Statistic.Value>{countyBreakdown.deaths_today}</Statistic.Value>
+          <Statistic.Label>Deaths</Statistic.Label>
+        </Statistic>
+      </Statistic.Group>
     ) : (
-      <tr key={countyBreakdown.county_name}>
-        <td>{countyBreakdown.county_name}</td>
-        <td>{countyBreakdown.positives_total}</td>
-        <td>{countyBreakdown.tested_total}</td>
-        <td>{countyBreakdown.deaths_total}</td>
-      </tr>
+      <Statistic.Group size="small">
+        <Statistic size="mini">
+          <Statistic.Value>{countyBreakdown.county_name}</Statistic.Value>
+        </Statistic>
+        <Statistic color="red">
+          <Statistic.Value>{countyBreakdown.positives_total}</Statistic.Value>
+          <Statistic.Label>Cases</Statistic.Label>
+        </Statistic>
+        <Statistic color="teal">
+          <Statistic.Value>{countyBreakdown.tested_total}</Statistic.Value>
+          <Statistic.Label>Tested</Statistic.Label>
+        </Statistic>
+        <Statistic olor="grey">
+          <Statistic.Value>{countyBreakdown.deaths_total}</Statistic.Value>
+          <Statistic.Label>Deaths</Statistic.Label>
+        </Statistic>
+      </Statistic.Group>
     );
   };
-  const renderTableHeader = (header) => {
-    return (
-      <tr>
-        <th>{header}</th>
-        <th>Cases</th>
-        <th>Tested</th>
-        <th>Deaths</th>
-      </tr>
-    );
-  };
-  return (
-    <div className="tableFormat">
-      <table>
-        <tbody style={{ textAlign: "center" }}>
-          {renderTableHeader(header)}
-          {renderTableData()}
-        </tbody>
-      </table>
-    </div>
-  );
+
+  return <div>{renderTableData()}</div>;
 };
 
 export default CountyBreakdownTable;

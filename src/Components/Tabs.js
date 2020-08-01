@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tab } from "semantic-ui-react";
+import { Tab, Accordion, Button, Label } from "semantic-ui-react";
 import CountyBreakdownTable from "./CountyBreakdownTable";
 import {
   il_county_covid_geo_data_today,
@@ -15,6 +15,7 @@ import { isMobile } from "react-device-detect";
 const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const [selectedId, setSelectedId] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeAccordion, setActiveAccordion] = useState(1);
   const barPlotTitleToday = `County Breakdown of Covid Cases ${todayDate.toLocaleDateString()}`;
   const barPlotTitleTotal = `County Breakdown of Total Covid Cases`;
 
@@ -24,6 +25,13 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     barPlotHeight = 200;
     barPlotWidth = 300;
   }
+
+  const handleTabChange = (e, { activeIndex }) => setActiveIndex(activeIndex);
+  const handleAccordionClick = (e, { index }) => {
+    const newIndex = activeAccordion === index ? -1 : index;
+    setActiveAccordion(newIndex);
+  };
+
   const renderDataInTab = (
     illinoisData,
     countyData,
@@ -31,8 +39,8 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     il_county_covid_geo_data,
     showTodayData,
     color_breaks_data
-  ) =>
-    Object.keys(illinoisData).length !== 0 && countyData.length > 0 ? (
+  ) => {
+    return Object.keys(illinoisData).length !== 0 && countyData.length > 0 ? (
       <Tab.Pane>
         <div className="today">
           <div className="dateStateData">
@@ -42,8 +50,21 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               showTodayData={showTodayData}
             />
           </div>
-          <h3 style={{ marginTop: "10px" }}>Positive Rates</h3>
-          <PositivityRates data={countyData} showTodayData={showTodayData} />
+          <Accordion fluid styled className="accordion-containier">
+            <Accordion.Title
+              active={activeAccordion === 0}
+              index={0}
+              onClick={handleAccordionClick}
+            >
+              <Button negative>Click to view positivity rates</Button>
+            </Accordion.Title>
+            <Accordion.Content active={activeAccordion === 0}>
+              <PositivityRates
+                data={countyData}
+                showTodayData={showTodayData}
+              />
+            </Accordion.Content>
+          </Accordion>
           <div className="todayData">
             <div id="today-bar-tooltip" className="today-bar-tooltip">
               <div className="tooltip-title" id="title"></div>
@@ -64,6 +85,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               leftAxisTitle="Positive Cases"
               bottomAxisTitle="County"
               showTodayData={showTodayData}
+              activeAccordion={activeAccordion}
             />
             <MapboxGLMap
               data={il_county_covid_geo_data(countyData)}
@@ -80,6 +102,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     ) : (
       <Tab.Pane loading></Tab.Pane>
     );
+  };
 
   const panes = [
     {
@@ -108,16 +131,6 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     },
   ];
 
-  const renderPositivityGauges = () => {
-    return (
-      <Tab.Pane>
-        <div>
-          <PositivityRates data={countyData} />
-        </div>
-      </Tab.Pane>
-    );
-  };
-  const handleTabChange = (e, { activeIndex }) => setActiveIndex(activeIndex);
   return (
     <Tab
       panes={panes}

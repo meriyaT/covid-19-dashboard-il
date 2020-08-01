@@ -22,6 +22,7 @@ export const BarPlot = ({
   bottomAxisTitle = "Bottom Axis Title",
   onSelectItem,
   showTodayData,
+  activeAccordion,
 }) => {
   const [ref, dimensions] = useChartDimensions();
   if (!data) {
@@ -107,6 +108,7 @@ export const BarPlot = ({
                 onSelectItem={onSelectItem}
                 dimensions={dimensions}
                 showTodayData={showTodayData}
+                activeAccordion={activeAccordion}
               />
             </React.Fragment>
           ))}

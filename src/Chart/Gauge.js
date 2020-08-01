@@ -24,7 +24,7 @@ const Gauge = ({ value = 5.0, min = 0.0, max = 12.0, label, units }) => {
     .startAngle(-Math.PI / 2)
     .endAngle(angle)
     .cornerRadius(1)();
-  const colorScale = scaleLinear().domain([0, 1]).range(["#dbdbe7", "#4834d4"]);
+  const colorScale = scaleLinear().domain([0, 1]).range(["#f1a9a0", "#96281b"]);
   const gradientSteps = colorScale.ticks(10).map((value) => colorScale(value));
   const markerLocation = getCoordsOnArc(angle, 1 - (1 - 0.65) / 2);
   return (
@@ -73,7 +73,7 @@ const Gauge = ({ value = 5.0, min = 0.0, max = 12.0, label, units }) => {
       <div
         style={{
           marginTop: "0.4em",
-          fontSize: "3em",
+          fontSize: "2em",
           lineHeight: "1em",
           fontWeight: "900",
           fontFeatureSettings: "'zero', 'tnum' 1",
