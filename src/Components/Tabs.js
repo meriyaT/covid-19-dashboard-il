@@ -16,6 +16,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const [selectedId, setSelectedId] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeAccordion, setActiveAccordion] = useState(1);
+  const [content, setContent] = useState("Show positivity rates");
   const barPlotTitleToday = `County Breakdown of Covid Cases ${todayDate.toLocaleDateString()}`;
   const barPlotTitleTotal = `County Breakdown of Total Covid Cases`;
 
@@ -30,6 +31,9 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const handleAccordionClick = (e, { index }) => {
     const newIndex = activeAccordion === index ? -1 : index;
     setActiveAccordion(newIndex);
+    activeAccordion === 0
+      ? setContent("Show positivity rates")
+      : setContent("Hide positivity rates");
   };
 
   const renderDataInTab = (
@@ -56,7 +60,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               index={0}
               onClick={handleAccordionClick}
             >
-              <Button negative>Click to view positivity rates</Button>
+              <Button secondary content={content} />
             </Accordion.Title>
             <Accordion.Content active={activeAccordion === 0}>
               <PositivityRates
@@ -66,12 +70,6 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
             </Accordion.Content>
           </Accordion>
           <div className="todayData">
-            <div id="today-bar-tooltip" className="today-bar-tooltip">
-              <div className="tooltip-title" id="title"></div>
-              <div className="tooltip-bar-value">
-                <span id="tooltip-bar-value"></span>
-              </div>
-            </div>
             <BarPlot
               data={countyData.slice(0, 20)}
               svgWidth={barPlotWidth}

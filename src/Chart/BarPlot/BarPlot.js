@@ -63,6 +63,12 @@ export const BarPlot = ({
 
   return (
     <div className="barPlot" ref={ref}>
+      <div id="today-bar-tooltip" className="today-bar-tooltip">
+        <div className="tooltip-title" id="title"></div>
+        <div className="tooltip-bar-value">
+          <span id="tooltip-bar-value"></span>
+        </div>
+      </div>
       <svg width={svgWidth} height={svgHeight} style={styles}>
         <g>
           <text

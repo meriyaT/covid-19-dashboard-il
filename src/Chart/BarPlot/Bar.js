@@ -66,18 +66,15 @@ export const Bar = ({
     tooltipY = y + parseInt(dimensions.marginTop);
     if (isMobile) {
       if (activeAccordion === 0 || activeAccordion === -1) {
-        tooltipX = tooltipX + 18;
-        tooltipY = tooltipY + 950;
+        tooltipX = tooltipX + 5;
+        tooltipY = tooltipY - 20;
       } else {
-        tooltipX = tooltipX + 18;
-        tooltipY = tooltipY + 180;
+        tooltipX = tooltipX - 1;
+        tooltipY = tooltipY - 20;
       }
-    } else if (activeAccordion !== 0 || activeAccordion !== -1) {
-      tooltipX = tooltipX + 30;
-      tooltipY = tooltipY + 120;
     } else {
-      tooltipX = tooltipX + 30;
-      tooltipY = tooltipY + 900;
+      tooltipX = tooltipX + 10;
+      tooltipY = tooltipY - 20;
     }
 
     tooltip.style(
