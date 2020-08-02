@@ -2,6 +2,8 @@ import React from "react";
 import Gauge from "./../Chart/Gauge";
 
 export const PositivityRates = ({ data, units, showTodayData }) => {
+  let min, max;
+  showTodayData ? ((min = 0.0), (max = 15.0)) : ((min = 0.0), (max = 30));
   return (
     <div className="positivity-gauge-container">
       {data.slice(0, 10).map((data) => {
@@ -19,6 +21,8 @@ export const PositivityRates = ({ data, units, showTodayData }) => {
             value={positivity_rate}
             label={data.county_name}
             units={units}
+            min={min}
+            max={max}
           />
         );
       })}

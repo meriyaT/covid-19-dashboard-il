@@ -15,6 +15,7 @@ import { isMobile } from "react-device-detect";
 const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const [selectedId, setSelectedId] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIllinoisIndex, setActiveIllinoisIndex] = useState(0);
   const [activeAccordion, setActiveAccordion] = useState(1);
   const [content, setContent] = useState("Show positivity rates");
   const barPlotTitleToday = `County Breakdown of Covid Cases ${todayDate.toLocaleDateString()}`;
@@ -28,6 +29,9 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   }
 
   const handleTabChange = (e, { activeIndex }) => setActiveIndex(activeIndex);
+  const handleIllinoisTabChange = (e, { activeIndex }) =>
+    setActiveIllinoisIndex(activeIndex);
+
   const handleAccordionClick = (e, { index }) => {
     const newIndex = activeAccordion === index ? -1 : index;
     setActiveAccordion(newIndex);
@@ -45,7 +49,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     color_breaks_data
   ) => {
     return Object.keys(illinoisData).length !== 0 && countyData.length > 0 ? (
-      <Tab.Pane>
+      <Tab.Pane className="inner-tab">
         <div className="today">
           <div className="dateStateData">
             <CountyBreakdownTable
@@ -92,7 +96,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               coordinates={[-88.7, 42.49]}
               zoom={6}
               selectedId={selectedId}
-              activeIndex={activeIndex}
+              activeIndex={activeIllinoisIndex}
             />
           </div>
         </div>
@@ -104,7 +108,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
 
   const panes = [
     {
-      menuItem: "Today's Cases",
+      menuItem: "Today's cases",
       render: () =>
         renderDataInTab(
           illinoisData,
@@ -116,7 +120,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
         ),
     },
     {
-      menuItem: "Total Cases",
+      menuItem: "Total cases",
       render: () =>
         renderDataInTab(
           illinoisData,
@@ -129,12 +133,32 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     },
   ];
 
+  const renderInnerTabs = () => {
+    return (
+      <div>
+        <Tab
+          menu={{ fluid: true, vertical: true }}
+          menuPosition="right"
+          panes={panes}
+          activeIndex={activeIllinoisIndex}
+          onTabChange={handleIllinoisTabChange}
+        />
+      </div>
+    );
+  };
+  const renderIllinoisData = () => {
+    return <Tab.Pane>{renderInnerTabs()}</Tab.Pane>;
+  };
+
+  const mainPanes = [{ menuItem: "State", render: () => renderIllinoisData() }];
+
   return (
     <Tab
-      panes={panes}
+      panes={mainPanes}
       activeIndex={activeIndex}
       onTabChange={handleTabChange}
     />
   );
 };
+
 export default Tabs;

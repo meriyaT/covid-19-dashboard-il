@@ -45,7 +45,7 @@ h4 {
 }
 
 .mapbox-map {
-  width: 40vw;
+  width: 60vw;
   height: 40vh;
   margin-bottom: 15px;
 }
@@ -57,6 +57,7 @@ h4 {
 .barPlot {
   transform: translateX(-45px);
 }
+
 @media only screen and (min-device-width: 768px) {
   .today {
     justify-content: space-around;
@@ -77,6 +78,12 @@ h4 {
   }
 }
 
+@media screen and (max-device-width: 1366px) and (min-device-width: 768px) {
+  .mapbox-map {
+    height: 20vh;
+  }
+}
+
 .positivity-button {
   background: maroon;
 }
@@ -94,6 +101,9 @@ h4 {
   box-shadow: none;
 }
 
+.ui.attached.segment.inner-tab {
+  border: none;
+}
 .accordion-title {
   font-weight: 500;
   color: rgba(145, 61, 136, 0.4);
