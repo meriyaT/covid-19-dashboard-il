@@ -57,7 +57,14 @@ h4 {
 .barPlot {
   transform: translateX(-45px);
 }
-
+.ui.styled.accordion .title.positivity-rate-title {
+  padding: 0;
+}
+@media only screen and (min-device-width: 350px) {
+  .ui.vertical.menu .item {
+    padding-left: 8px;
+  }
+}
 @media only screen and (min-device-width: 768px) {
   .today {
     justify-content: space-around;

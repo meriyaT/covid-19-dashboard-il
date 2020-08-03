@@ -69,7 +69,7 @@ export const Bar = ({
         tooltipX = tooltipX + 5;
         tooltipY = tooltipY - 20;
       } else {
-        tooltipX = tooltipX - 1;
+        tooltipX = tooltipX + 5;
         tooltipY = tooltipY - 20;
       }
     } else {

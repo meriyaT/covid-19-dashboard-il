@@ -20,6 +20,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const [content, setContent] = useState("Show positivity rates");
   const barPlotTitleToday = `County Breakdown of Covid Cases ${todayDate.toLocaleDateString()}`;
   const barPlotTitleTotal = `County Breakdown of Total Covid Cases`;
+  let dataForBarPlot = [];
 
   let barPlotHeight = 400,
     barPlotWidth = 600;
@@ -48,6 +49,13 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     showTodayData,
     color_breaks_data
   ) => {
+    dataForBarPlot = showTodayData
+      ? countyData
+          .sort((a, b) => b.positives_today - a.positives_today)
+          .slice(0, 20)
+      : countyData
+          .sort((a, b) => b.positives_total - a.positives_total)
+          .slice(0, 20);
     return Object.keys(illinoisData).length !== 0 && countyData.length > 0 ? (
       <Tab.Pane className="inner-tab">
         <div className="today">
@@ -63,6 +71,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               active={activeAccordion === 0}
               index={0}
               onClick={handleAccordionClick}
+              className="positivity-rate-title"
             >
               <Button secondary content={content} />
             </Accordion.Title>
@@ -75,7 +84,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
           </Accordion>
           <div className="todayData">
             <BarPlot
-              data={countyData.slice(0, 20)}
+              data={dataForBarPlot}
               svgWidth={barPlotWidth}
               svgHeight={barPlotHeight}
               itemDelay={200}
@@ -108,7 +117,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
 
   const panes = [
     {
-      menuItem: "Today's cases",
+      menuItem: "Today",
       render: () =>
         renderDataInTab(
           illinoisData,
@@ -120,7 +129,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
         ),
     },
     {
-      menuItem: "Total cases",
+      menuItem: "Total",
       render: () =>
         renderDataInTab(
           illinoisData,
@@ -134,16 +143,23 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   ];
 
   const renderInnerTabs = () => {
-    return (
-      <div>
-        <Tab
-          menu={{ fluid: true, vertical: true }}
-          menuPosition="right"
-          panes={panes}
-          activeIndex={activeIllinoisIndex}
-          onTabChange={handleIllinoisTabChange}
-        />
-      </div>
+    return isMobile ? (
+      <Tab
+        menu={{ fluid: true, vertical: true }}
+        menuPosition="right"
+        panes={panes}
+        activeIndex={activeIllinoisIndex}
+        onTabChange={handleIllinoisTabChange}
+      />
+    ) : (
+      <Tab
+        menu={{ fluid: true, vertical: true }}
+        grid={{ paneWidth: 14, tabWidth: 2 }}
+        menuPosition="right"
+        panes={panes}
+        activeIndex={activeIllinoisIndex}
+        onTabChange={handleIllinoisTabChange}
+      />
     );
   };
   const renderIllinoisData = () => {
