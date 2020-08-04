@@ -8,8 +8,8 @@ const ZipcodeTypeaheadDropdown = ({ zipcodeCityCountyList, onSelected }) => {
 
   useEffect(() => {
     let dropdownValues = zipcodeCityCountyList.map((value) => {
-      let { zipcode, city, county } = value;
-      return `${zipcode} ${city} ${county}`;
+      let { zip, city, county } = value;
+      return `${zip} ${city} ${county}`;
     });
     setDropdownValues(dropdownValues);
   }, []);

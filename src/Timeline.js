@@ -11,7 +11,15 @@ const formatDate = d3.timeFormat("%b %-d");
 const formatTick = d3.format(",");
 const gradientColors = ["rgb(226, 222, 243)", "#f8f9fa"];
 
-const Timeline = ({ data, xAccessor, yAccessor, labelY }) => {
+const Timeline = ({
+  zipcode,
+  data,
+  xAccessor,
+  yAccessor,
+  labelY,
+  subLabelY,
+  showTodayData,
+}) => {
   const tooltipCircleRef = useRef(null);
   const rectRef = useRef(null);
   const [ref, dimensions] = useChartDimensions();
@@ -52,13 +60,40 @@ const Timeline = ({ data, xAccessor, yAccessor, labelY }) => {
     const closestYValue = yAccessor(closestDataPoint);
 
     const formatDate = d3.timeFormat("%B %A %-d, %Y");
-    tooltip.select("#date").text(formatDate(closestXValue));
-
+    //  tooltip.select("#date").text(formatDate(closestXValue));
     const formatValue = (d) => `${d3.format(".1f")(d)}`;
-    tooltip.select("#bitcoinValue").html(formatValue(closestYValue));
 
-    const x = xScale(closestXValue) + dimensions.marginLeft + 50;
-    const y = yScale(closestYValue) + dimensions.marginTop + 700;
+    let tested_positive =
+      labelY === "7 day rolling avg"
+        ? formatValue(closestYValue)
+        : closestYValue;
+    let positives_metric =
+      labelY === "7 day rolling avg"
+        ? "tested_7ma"
+        : showTodayData
+        ? "tested_today"
+        : "tested_total";
+
+    let subLabelYValue =
+      labelY === "7 day rolling avg"
+        ? formatValue(closestDataPoint[positives_metric])
+        : closestDataPoint[positives_metric];
+    let popupContent = `
+      <span>${formatDate(closestXValue)}</span>
+      <table>
+        <tr>
+          <th>${labelY}</th>
+          <td>${tested_positive}</td>
+        </tr>
+        <tr>
+        <th>${subLabelY}</th>
+        <td>${subLabelYValue}</td>
+      </tr>
+      <table>
+    `;
+    tooltip.select("#tooltip-value").html(popupContent);
+    const x = xScale(closestXValue) + dimensions.marginLeft + 25;
+    const y = yScale(closestYValue) + dimensions.marginTop + 120;
 
     tooltip.style(
       "transform",
@@ -79,14 +114,14 @@ const Timeline = ({ data, xAccessor, yAccessor, labelY }) => {
 
   return (
     <div className="Timeline" ref={ref}>
-      <h4>{labelY}</h4>
+      <h4>
+        {labelY} for {zipcode}
+      </h4>
       <div id="tooltip" className="tooltip">
         <div className="tooltip-date">
           <span id="date"></span>
         </div>
-        <div className="tooltip-value">
-          Bitcoin Value: <span id="bitcoinValue"></span>
-        </div>
+        <div className="tooltip-value" id="tooltip-value"></div>
       </div>
       <Chart dimensions={dimensions}>
         <defs>

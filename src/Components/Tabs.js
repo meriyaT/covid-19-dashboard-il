@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tab, Accordion, Button, Label } from "semantic-ui-react";
 import CountyBreakdownTable from "./CountyBreakdownTable";
+import ZipcodeTypeahead from "./ZipcodeTypeahead";
+import zipcodeCityCountyList from "./../utils/zipcodes";
+import Timeline from "./../Timeline";
+import * as d3 from "d3";
+
 import {
   il_county_covid_geo_data_today,
   il_county_covid_geo_data_total,
@@ -16,8 +21,12 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const [selectedId, setSelectedId] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeIllinoisIndex, setActiveIllinoisIndex] = useState(0);
+  const [activeCountyIndex, setActiveCountyIndex] = useState(0);
   const [activeAccordion, setActiveAccordion] = useState(1);
   const [content, setContent] = useState("Show positivity rates");
+  const [location, setLocation] = useState({ zipcode: "60532" });
+  const [data, setData] = useState({});
+
   const barPlotTitleToday = `County Breakdown of Covid Cases ${todayDate.toLocaleDateString()}`;
   const barPlotTitleTotal = `County Breakdown of Total Covid Cases`;
   let dataForBarPlot = [];
@@ -29,10 +38,46 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     barPlotWidth = 300;
   }
 
+  const parseDate = d3.timeParse("%Y-%m-%d");
+
+  const dateAccessor = (d) => {
+    return d.date;
+  };
+  const infectedTodayAccessor = (d) => d.infected_today;
+
+  const infectedTotalAccessor = (d) => d.infected_total;
+
+  const sevenDayAvgAccessor = (d) => d.positive_7ma;
+
+  const getAPIData = async (zip) => {
+    let res = await fetch(
+      `https://h9ml0v7oy9.execute-api.us-west-2.amazonaws.com/test/historybyzip?zipcode=${zip}&date=2020-08-03&average_length=14`
+    );
+    let results = await res.json();
+    let resultArr = results.results.zipcode_data.timeline_data;
+    let finalData = await resultArr.map((item) => {
+      let day = parseDate(item.date);
+      item.date = day;
+      return item;
+    });
+    return finalData;
+  };
+
+  useEffect(() => {
+    getAPIData(location.zipcode).then((result) => {
+      setData(result);
+    });
+  }, [location]);
+
+  const onSelected = (zipCityCountyObj) => {
+    setLocation(zipCityCountyObj);
+  };
+
   const handleTabChange = (e, { activeIndex }) => setActiveIndex(activeIndex);
   const handleIllinoisTabChange = (e, { activeIndex }) =>
     setActiveIllinoisIndex(activeIndex);
-
+  const handleCountyTabChange = (e, { activeIndex }) =>
+    setActiveCountyIndex(activeIndex);
   const handleAccordionClick = (e, { index }) => {
     const newIndex = activeAccordion === index ? -1 : index;
     setActiveAccordion(newIndex);
@@ -41,7 +86,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
       : setContent("Hide positivity rates");
   };
 
-  const renderDataInTab = (
+  const renderIllinoisDataInTab = (
     illinoisData,
     countyData,
     barPlotTitle,
@@ -66,6 +111,79 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
               showTodayData={showTodayData}
             />
           </div>
+        </div>
+      </Tab.Pane>
+    ) : (
+      <Tab.Pane loading></Tab.Pane>
+    );
+  };
+
+  const panes = [
+    {
+      menuItem: "Today",
+      render: () =>
+        renderIllinoisDataInTab(
+          illinoisData,
+          countyData,
+          barPlotTitleToday,
+          il_county_covid_geo_data_today,
+          true,
+          color_breaks
+        ),
+    },
+    {
+      menuItem: "Total",
+      render: () =>
+        renderIllinoisDataInTab(
+          illinoisData,
+          countyData,
+          barPlotTitleTotal,
+          il_county_covid_geo_data_total,
+          false,
+          color_breaks_total
+        ),
+    },
+  ];
+
+  const renderInnerTabsIllinois = () => {
+    return isMobile ? (
+      <Tab
+        menu={{ fluid: true, vertical: true }}
+        menuPosition="right"
+        panes={panes}
+        activeIndex={activeIllinoisIndex}
+        onTabChange={handleIllinoisTabChange}
+      />
+    ) : (
+      <Tab
+        menu={{ fluid: true, vertical: true }}
+        grid={{ paneWidth: 14, tabWidth: 2 }}
+        menuPosition="right"
+        panes={panes}
+        activeIndex={activeIllinoisIndex}
+        onTabChange={handleIllinoisTabChange}
+      />
+    );
+  };
+
+  const renderCountyDataInTab = (
+    illinoisData,
+    countyData,
+    barPlotTitle,
+    il_county_covid_geo_data,
+    showTodayData,
+    color_breaks_data
+  ) => {
+    dataForBarPlot = showTodayData
+      ? countyData
+          .sort((a, b) => b.positives_today - a.positives_today)
+          .slice(0, 20)
+      : countyData
+          .sort((a, b) => b.positives_total - a.positives_total)
+          .slice(0, 20);
+    return Object.keys(illinoisData).length !== 0 && countyData.length > 0 ? (
+      <Tab.Pane className="inner-tab">
+        <div className="today">
           <Accordion fluid styled className="accordion-containier">
             <Accordion.Title
               active={activeAccordion === 0}
@@ -115,11 +233,11 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     );
   };
 
-  const panes = [
+  const countyPanes = [
     {
       menuItem: "Today",
       render: () =>
-        renderDataInTab(
+        renderCountyDataInTab(
           illinoisData,
           countyData,
           barPlotTitleToday,
@@ -131,7 +249,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     {
       menuItem: "Total",
       render: () =>
-        renderDataInTab(
+        renderCountyDataInTab(
           illinoisData,
           countyData,
           barPlotTitleTotal,
@@ -142,31 +260,161 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
     },
   ];
 
-  const renderInnerTabs = () => {
+  const renderInnerTabsCounty = () => {
     return isMobile ? (
       <Tab
         menu={{ fluid: true, vertical: true }}
         menuPosition="right"
-        panes={panes}
-        activeIndex={activeIllinoisIndex}
-        onTabChange={handleIllinoisTabChange}
+        panes={countyPanes}
+        activeIndex={activeCountyIndex}
+        onTabChange={handleCountyTabChange}
       />
     ) : (
       <Tab
         menu={{ fluid: true, vertical: true }}
         grid={{ paneWidth: 14, tabWidth: 2 }}
         menuPosition="right"
-        panes={panes}
-        activeIndex={activeIllinoisIndex}
-        onTabChange={handleIllinoisTabChange}
+        panes={countyPanes}
+        activeIndex={activeCountyIndex}
+        onTabChange={handleCountyTabChange}
       />
     );
   };
-  const renderIllinoisData = () => {
-    return <Tab.Pane>{renderInnerTabs()}</Tab.Pane>;
+
+  const renderZipCodeTodayDataInTab = (showTodayData) => {
+    return (
+      <div>
+        <ZipcodeTypeahead
+          zipcodeCityCountyList={zipcodeCityCountyList}
+          onSelected={onSelected}
+        />
+        {Object.keys(data).length !== 0 ? (
+          <div className="App__charts">
+            <Timeline
+              zipcode={location.zipcode}
+              data={data}
+              xAccessor={dateAccessor}
+              yAccessor={infectedTodayAccessor}
+              labelY="Daily Covid Cases"
+              labelX="Date"
+              subLabelY="Total tested"
+              showTodayData={showTodayData}
+            />
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
+    );
   };
 
-  const mainPanes = [{ menuItem: "State", render: () => renderIllinoisData() }];
+  const renderZipCodeTotalDataInTab = (showTodayData) => {
+    return (
+      <div>
+        <ZipcodeTypeahead
+          zipcodeCityCountyList={zipcodeCityCountyList}
+          onSelected={onSelected}
+        />
+        {Object.keys(data).length !== 0 ? (
+          <div className="App__charts">
+            <Timeline
+              zipcode={location.zipcode}
+              data={data}
+              xAccessor={dateAccessor}
+              yAccessor={infectedTotalAccessor}
+              labelY="Total Covid Cases"
+              labelX="Date"
+              subLabelY="Total tested"
+              showTodayData={showTodayData}
+            />
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
+    );
+  };
+
+  const renderZipCode7DayAvgInTab = (showTodayData) => {
+    return (
+      <div>
+        <ZipcodeTypeahead
+          zipcodeCityCountyList={zipcodeCityCountyList}
+          onSelected={onSelected}
+        />
+        {Object.keys(data).length !== 0 ? (
+          <div className="App__charts">
+            <Timeline
+              zipcode={location.zipcode}
+              data={data}
+              xAccessor={dateAccessor}
+              yAccessor={sevenDayAvgAccessor}
+              labelY="7 day rolling avg"
+              labelX="Date"
+              subLabelY="7 day tested rolling avg"
+              showTodayData={showTodayData}
+            />
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
+    );
+  };
+
+  const zipPanes = [
+    {
+      menuItem: "Daily Changes",
+      render: () => renderZipCodeTodayDataInTab(true),
+    },
+    {
+      menuItem: "Total",
+      render: () => renderZipCodeTotalDataInTab(false),
+    },
+    {
+      menuItem: "7 day rolling average",
+      render: () => renderZipCode7DayAvgInTab(false),
+    },
+  ];
+
+  const renderInnerTabsZip = () => {
+    return isMobile ? (
+      <Tab
+        menu={{ fluid: true, vertical: true }}
+        menuPosition="right"
+        panes={zipPanes}
+        activeIndex={activeCountyIndex}
+        onTabChange={handleCountyTabChange}
+      />
+    ) : (
+      <Tab
+        menu={{ fluid: true, vertical: true }}
+        grid={{ paneWidth: 14, tabWidth: 2 }}
+        menuPosition="right"
+        panes={zipPanes}
+        activeIndex={activeCountyIndex}
+        onTabChange={handleCountyTabChange}
+      />
+    );
+  };
+
+  const renderIllinoisData = () => {
+    return <Tab.Pane>{renderInnerTabsIllinois()}</Tab.Pane>;
+  };
+
+  const renderCountyData = () => {
+    return <Tab.Pane>{renderInnerTabsCounty()}</Tab.Pane>;
+  };
+
+  const renderZipData = () => {
+    return <Tab.Pane>{renderInnerTabsZip()}</Tab.Pane>;
+  };
+
+  const mainPanes = [
+    { menuItem: "State", render: () => renderIllinoisData() },
+    { menuItem: "County", render: () => renderCountyData() },
+    { menuItem: "Zipcode", render: () => renderZipData() },
+  ];
 
   return (
     <Tab
