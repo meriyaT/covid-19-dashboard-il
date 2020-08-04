@@ -43,7 +43,8 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const dateAccessor = (d) => {
     return d.date;
   };
-  const infectedTodayAccessor = (d) => d.infected_today;
+  const infectedTodayAccessor = (d) =>
+    d.infected_today > 0 ? d.infected_today : 0;
 
   const infectedTotalAccessor = (d) => d.infected_total;
 
