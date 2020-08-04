@@ -302,7 +302,9 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
             />
           </div>
         ) : (
-          <div></div>
+          <div>
+            <h3>No data available for this zipcode. Please try another zip.</h3>
+          </div>
         )}
       </div>
     );
@@ -329,7 +331,9 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
             />
           </div>
         ) : (
-          <div></div>
+          <div>
+            <h3>No data available for this zipcode. Please try another zip.</h3>
+          </div>
         )}
       </div>
     );
@@ -356,7 +360,9 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
             />
           </div>
         ) : (
-          <div></div>
+          <div>
+            <h3>No data available for this zipcode. Please try another zip.</h3>
+          </div>
         )}
       </div>
     );
