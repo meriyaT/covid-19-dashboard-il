@@ -28,7 +28,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
   const renderZipData = () => {
     return (
       <Tab.Pane>
-        <ZipcodeTab />
+        <ZipcodeTab todayDate={todayDate} />
       </Tab.Pane>
     );
   };

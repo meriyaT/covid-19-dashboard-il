@@ -6,10 +6,25 @@ const StatisticView = ({
   infected_stat,
   tested_stat,
   deaths_stat,
+  todayDate,
 }) => {
   function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
   }
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   const renderTableData = () => {
     return (
       <Statistic.Group size="small">
@@ -24,12 +39,21 @@ const StatisticView = ({
           <Statistic.Value>{formatNumber(tested_stat)}</Statistic.Value>
           <Statistic.Label>Tested</Statistic.Label>
         </Statistic>
-        <Statistic color="grey">
-          <Statistic.Value>
-            {deaths_stat ? formatNumber(deaths_stat) : "N/A"}
-          </Statistic.Value>
-          <Statistic.Label>Deaths</Statistic.Label>
-        </Statistic>
+        {deaths_stat ? (
+          <Statistic color="grey">
+            <Statistic.Value>{formatNumber(deaths_stat)}</Statistic.Value>
+            <Statistic.Label>Deaths</Statistic.Label>
+          </Statistic>
+        ) : (
+          <Statistic color="grey">
+            <Statistic.Value>
+              {`${
+                months[todayDate.todayDate.getMonth()]
+              } ${todayDate.todayDate.getDate()}`}
+            </Statistic.Value>
+            <Statistic.Label>Date</Statistic.Label>
+          </Statistic>
+        )}
       </Statistic.Group>
     );
   };

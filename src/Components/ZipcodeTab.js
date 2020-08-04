@@ -7,9 +7,8 @@ import ZipcodeTypeahead from "./ZipcodeTypeahead";
 import zipcodeCityCountyList from "./../utils/zipcodes";
 import Timeline from "./../Timeline";
 import StatisticView from "./StatisticView";
-import { render } from "react-dom";
 
-const ZipcodeTab = () => {
+const ZipcodeTab = (todayDate) => {
   const [activeZipTabIndex, setActiveZipTabIndex] = useState(0);
   const [location, setLocation] = useState({ zipcode: "60532" });
   const [data, setData] = useState({});
@@ -62,6 +61,7 @@ const ZipcodeTab = () => {
         infected_stat={data[0].infected_today}
         tested_stat={data[0].tested_today}
         deaths_stat={data[0].deaths_today}
+        todayDate={todayDate}
       />
     ) : showSevenDay ? (
       <StatisticView
@@ -69,6 +69,7 @@ const ZipcodeTab = () => {
         infected_stat={formatValue(data[0].positive_7ma)}
         tested_stat={formatValue(data[0].tested_7ma)}
         deaths_stat={data[0].deaths_total}
+        todayDate={todayDate}
       />
     ) : (
       <StatisticView
@@ -76,6 +77,7 @@ const ZipcodeTab = () => {
         infected_stat={data[0].infected_total}
         tested_stat={data[0].tested_total}
         deaths_stat={data[0].deaths_total}
+        todayDate={todayDate}
       />
     );
   };
