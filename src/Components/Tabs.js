@@ -371,7 +371,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
 
   const zipPanes = [
     {
-      menuItem: "Daily Changes",
+      menuItem: "Daily",
       render: () => renderZipCodeTodayDataInTab(true),
     },
     {
@@ -379,7 +379,7 @@ const Tabs = ({ illinoisData, countyData, todayDate }) => {
       render: () => renderZipCodeTotalDataInTab(false),
     },
     {
-      menuItem: "7 day rolling average",
+      menuItem: "7day",
       render: () => renderZipCode7DayAvgInTab(false),
     },
   ];
