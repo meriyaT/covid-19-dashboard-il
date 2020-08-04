@@ -64,18 +64,18 @@ const Timeline = ({
     const formatValue = (d) => `${d3.format(".1f")(d)}`;
 
     let tested_positive =
-      labelY === "7 day rolling avg"
+      labelY === "7 day moving average"
         ? formatValue(closestYValue)
         : closestYValue;
     let positives_metric =
-      labelY === "7 day rolling avg"
+      labelY === "7 day moving average"
         ? "tested_7ma"
         : showTodayData
         ? "tested_today"
         : "tested_total";
 
     let subLabelYValue =
-      labelY === "7 day rolling avg"
+      labelY === "7 day moving average"
         ? formatValue(closestDataPoint[positives_metric])
         : closestDataPoint[positives_metric];
     let popupContent = `
@@ -93,7 +93,7 @@ const Timeline = ({
     `;
     tooltip.select("#tooltip-value").html(popupContent);
     const x = xScale(closestXValue) + dimensions.marginLeft + 25;
-    const y = yScale(closestYValue) + dimensions.marginTop + 120;
+    const y = yScale(closestYValue) + dimensions.marginTop + 160;
 
     tooltip.style(
       "transform",
