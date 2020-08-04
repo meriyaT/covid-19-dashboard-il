@@ -14,7 +14,7 @@ const ZipcodeTab = (todayDate) => {
   const [data, setData] = useState({});
 
   const handleZipTabChange = (e, { activeIndex }) =>
-    setActiveZipTabIndex(activeIndex);
+    setActivgiteZipTabIndex(activeIndex);
 
   const onSelected = (zipCityCountyObj) => {
     setLocation(zipCityCountyObj);
@@ -22,6 +22,18 @@ const ZipcodeTab = (todayDate) => {
 
   const parseDate = d3.timeParse("%Y-%m-%d");
 
+  function formatDate(d) {
+    let month = "" + (d.todayDate.getMonth() + 1),
+      day = "" + d.todayDate.getDate(),
+      year = d.todayDate.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  }
+
+  const dateParameter = formatDate(todayDate);
   const formatValue = (d) => `${d3.format(".1f")(d)}`;
 
   const dateAccessor = (d) => {
@@ -36,7 +48,7 @@ const ZipcodeTab = (todayDate) => {
 
   const getAPIData = async (zip) => {
     let res = await fetch(
-      `https://h9ml0v7oy9.execute-api.us-west-2.amazonaws.com/test/historybyzip?zipcode=${zip}&date=2020-08-03&average_length=14`
+      `https://h9ml0v7oy9.execute-api.us-west-2.amazonaws.com/test/historybyzip?zipcode=${zip}&date=${dateParameter}&average_length=14`
     );
     let results = await res.json();
     let resultArr = results.results.zipcode_data.timeline_data;
