@@ -14,7 +14,7 @@ const ZipcodeTab = (todayDate) => {
   const [data, setData] = useState({});
 
   const handleZipTabChange = (e, { activeIndex }) =>
-    setActivgiteZipTabIndex(activeIndex);
+    setActiveZipTabIndex(activeIndex);
 
   const onSelected = (zipCityCountyObj) => {
     setLocation(zipCityCountyObj);
