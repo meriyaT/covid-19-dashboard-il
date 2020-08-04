@@ -60,6 +60,14 @@ h4 {
 .ui.styled.accordion .title.positivity-rate-title {
   padding: 0;
 }
+
+.Timeline {
+  height: 300px;
+  min-width: 295px;
+  width: calc(100% + 1em);
+  margin-bottom: 2em;
+}
+
 @media only screen and (min-device-width: 350px) {
   .ui.vertical.menu .item {
     padding-left: 8px;
@@ -82,6 +90,9 @@ h4 {
 
   .barPlot {
     transform: translateX(10px);
+  }
+  .Timeline {
+    min-width: 500px;
   }
 }
 
@@ -207,13 +218,6 @@ th {
 .tooltip-bar-item {
   background: #30336b;
   height: 100%;
-}
-
-.Timeline {
-  height: 300px;
-  min-width: 500px;
-  width: calc(100% + 1em);
-  margin-bottom: 2em;
 }
 
 .Histogram {
