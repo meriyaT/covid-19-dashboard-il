@@ -70,6 +70,7 @@ const App = () => {
   return (
     <div className="App">
       <h1>Covid Dashboard</h1>
+      <p>Data updates everyday at 2:30pm Chicago time</p>
       <Tabs
         illinoisData={todayIllinoisData}
         countyData={todayCountyData}
