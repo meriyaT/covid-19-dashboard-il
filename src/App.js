@@ -71,6 +71,7 @@ const App = () => {
     <div className="App">
       <h1>Covid Dashboard</h1>
       <p>Data updates everyday at 2:30pm Chicago time</p>
+      <p>Source of data - Illinois Department of Public Health</p>
       <Tabs
         illinoisData={todayIllinoisData}
         countyData={todayCountyData}
