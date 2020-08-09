@@ -95,6 +95,10 @@ h4 {
   .Timeline {
     min-width: 500px;
   }
+
+  .zip__charts {
+    display: flex;
+  }
 }
 
 @media screen and (max-device-width: 1366px) and (min-device-width: 768px) {

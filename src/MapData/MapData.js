@@ -139,7 +139,9 @@ export const il_zipcode_covid_geo_data_total = (zipcodeBreakdown) => {
     f.properties.COVID_CASES = 0;
     for (let c of zipcodeBreakdown) {
       if (f.id === parseInt(c[0])) {
-        f.properties.COVID_CASES = parseInt(c[1].infected_total);
+        f.properties.COVID_CASES = c[1].infected_total
+          ? parseInt(c[1].infected_total)
+          : 0;
       }
     }
   }
@@ -153,7 +155,9 @@ export const il_zipcode_covid_geo_data_today = (zipcodeBreakdown) => {
     f.properties.COVID_CASES = 0;
     for (let c of zipcodeBreakdown) {
       if (f.id === parseInt(c[0])) {
-        f.properties.COVID_CASES = parseInt(c[1].infected_today);
+        f.properties.COVID_CASES = c[1].infected_today
+          ? parseInt(c[1].infected_today)
+          : 0;
       }
     }
   }
@@ -167,7 +171,9 @@ export const il_zipcode_covid_geo_data_7day = (zipcodeBreakdown) => {
     f.properties.COVID_CASES = 0;
     for (let c of zipcodeBreakdown) {
       if (f.id === parseInt(c[0])) {
-        f.properties.COVID_CASES = parseFloat(formatValue(c[1].infected_7ma));
+        f.properties.COVID_CASES = c[1].infected_7ma
+          ? parseFloat(formatValue(c[1].infected_7ma))
+          : 0;
       }
     }
   }
