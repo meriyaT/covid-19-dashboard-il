@@ -28,19 +28,19 @@ const StatisticView = ({
   const renderTableData = () => {
     return (
       <Statistic.Group size="small">
-        <Statistic size="mini">
+        <Statistic horizontal size="mini">
           <Statistic.Value>{location_name}</Statistic.Value>
         </Statistic>
-        <Statistic color="red">
+        <Statistic horizontal color="red">
           <Statistic.Value>{formatNumber(infected_stat)}</Statistic.Value>
           <Statistic.Label>Cases</Statistic.Label>
         </Statistic>
-        <Statistic color="teal">
+        <Statistic horizontal color="teal">
           <Statistic.Value>{formatNumber(tested_stat)}</Statistic.Value>
           <Statistic.Label>Tested</Statistic.Label>
         </Statistic>
         {deaths_stat ? (
-          <Statistic color="grey">
+          <Statistic horizontal color="grey">
             <Statistic.Value>{formatNumber(deaths_stat)}</Statistic.Value>
             <Statistic.Label>Deaths</Statistic.Label>
           </Statistic>
@@ -51,7 +51,6 @@ const StatisticView = ({
                 months[todayDate.todayDate.getMonth()]
               } ${todayDate.todayDate.getDate()}`}
             </Statistic.Value>
-            <Statistic.Label>Date</Statistic.Label>
           </Statistic>
         )}
       </Statistic.Group>
