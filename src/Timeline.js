@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import * as d3 from "d3";
+import { isMobile } from "react-device-detect";
 
 import Chart from "./Chart/Chart";
 import Line from "./Chart/Line";
@@ -92,9 +93,12 @@ const Timeline = ({
       <table>
     `;
     tooltip.select("#tooltip-value").html(popupContent);
-    const x = xScale(closestXValue) + dimensions.marginLeft + 25;
-    const y = yScale(closestYValue) + dimensions.marginTop + 160;
+    let x = xScale(closestXValue) + dimensions.marginLeft + 25;
+    let y = yScale(closestYValue) + dimensions.marginTop + 160;
 
+    if (isMobile) {
+      y = y + 80;
+    }
     tooltip.style(
       "transform",
       `translate(` + `calc( -50% + ${x}px),` + `calc(-100% + ${y}px)` + `)`

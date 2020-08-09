@@ -16,9 +16,12 @@ export const MapboxGLMap = ({
   coordinates = [-88.7, 42.49],
   zoom = 6,
   activeIndex,
+  zipcodeMap = false,
 }) => {
   const mapContainer = useRef(null);
   const [statefulMap, setStatefulMap] = useState(null);
+
+  let previousSelectedId = "";
 
   const getFillColor = (colorBreaks) => {
     let fc = [];
@@ -36,16 +39,17 @@ export const MapboxGLMap = ({
   };
 
   const updateMap = () => {
-    statefulMap.getSource("counties").setData(data);
+    statefulMap.getSource("locations").setData(data);
     if (colorBreaks) {
-      statefulMap.removeLayer("countiesSolidLayer");
+      statefulMap.removeLayer("locationsSolidLayer");
       statefulMap.addLayer({
-        id: "countiesSolidLayer",
-        source: "counties",
+        id: "locationsSolidLayer",
+        source: "locations",
         type: "fill",
         paint: { "fill-color": getFillColor(colorBreaks) },
       });
     }
+    previousSelectedId = "";
   };
 
   const initMap = () => {
@@ -63,35 +67,47 @@ export const MapboxGLMap = ({
 
     mapboxGlMap.on("load", () => {
       mapboxGlMap.fitBounds(IllinoisBoundingBox);
-      mapboxGlMap.addSource("counties", {
+      mapboxGlMap.addSource("locations", {
         type: "geojson",
         data,
       });
 
-      if (colorBreaks) {
+      //   if (colorBreaks) {
+      mapboxGlMap.addLayer({
+        id: "locationsSolidLayer",
+        source: "locations",
+        type: "fill",
+        paint: { "fill-color": getFillColor(colorBreaks) },
+      });
+      //   }
+
+      if (!zipcodeMap) {
         mapboxGlMap.addLayer({
-          id: "countiesSolidLayer",
-          source: "counties",
-          type: "fill",
-          paint: { "fill-color": getFillColor(colorBreaks) },
+          id: "locations-solid-line",
+          source: "locations",
+          type: "line",
+          paint: { "line-color": "gray" },
         });
       }
-
-      mapboxGlMap.addLayer({
-        id: "counties-solid-line",
-        source: "counties",
-        type: "line",
-        paint: { "line-color": "gray" },
-      });
-
       //Add a transperant color layer to highlight a county during mouseover event
       mapboxGlMap.addLayer({
-        id: "county-highlight",
-        source: "counties",
+        id: "location-highlight",
+        source: "locations",
         type: "fill",
         paint: {
           "fill-outline-color": "rgba(103, 65, 114, 0)",
           "fill-color": "rgba(103, 65, 114, 0)",
+        },
+      });
+
+      //Add a transperant color layer to highlight a county during mouseover event
+      mapboxGlMap.addLayer({
+        id: "zip-highlight",
+        source: "locations",
+        type: "line",
+        paint: {
+          "line-color": "rgba(103, 65, 114, 0)",
+          "line-width": 4,
         },
       });
 
@@ -100,38 +116,60 @@ export const MapboxGLMap = ({
         closeButton: false,
         closeOnClick: false,
       });
-      mapboxGlMap.on("mousemove", "countiesSolidLayer", function (e) {
+      mapboxGlMap.on("mousemove", "locationsSolidLayer", function (e) {
         // Change the cursor style as a UI indicator.
         mapboxGlMap.getCanvas().style.cursor = "pointer";
 
         const feature = e.features[0];
 
-        mapboxGlMap.setPaintProperty("county-highlight", "fill-color", [
-          "case",
-          ["==", ["get", "COUNTY_NAM"], feature.properties.COUNTY_NAM],
-          "rgba(46, 49, 49, 1)",
-          "rgba(0,0,0,0)",
-        ]);
+        !zipcodeMap
+          ? mapboxGlMap.setPaintProperty("location-highlight", "fill-color", [
+              "case",
+              ["==", ["get", "COUNTY_NAM"], feature.properties.COUNTY_NAM],
+              "rgba(46, 49, 49, 1)",
+              "rgba(0,0,0,0)",
+            ])
+          : mapboxGlMap.setPaintProperty("location-highlight", "fill-color", [
+              "case",
+              ["==", ["get", "zip"], feature.properties.zip],
+              "rgba(245, 171, 53, 1)",
+              "rgba(0,0,0,0)",
+            ]);
+
+        /*  if (zipcodeMap) {
+          mapboxGlMap.setPaintProperty("zip-highlight", "fill-color", [
+            "case",
+            ["==", ["get", "zip"], feature.properties.zip],
+            "rgba(245, 171, 53, 1)",
+            "rgba(0,0,0,0)",
+          ]);
+        }*/
+        let locationName = feature.properties.COUNTY_NAM
+          ? feature.properties.COUNTY_NAM
+          : feature.id;
+        let covidCases = feature.properties.COVID_CASES
+          ? feature.properties.COVID_CASES
+          : 0;
         let popupContent = `
-                <h2>${feature.properties.COUNTY_NAM}</h2>
+                <h2>${locationName}</h2>
                 <table>
                   <tr>
                     <th>Tested positive</th>
-                    <td>${feature.properties.COVID_CASES}</td>
+                    <td>${covidCases}</td>
                   </tr>
                 <table>
               `;
         if (isMobile) {
-          popupContent = `<p>${feature.properties.COUNTY_NAM}</p><span>Tested positive ${feature.properties.COVID_CASES}</span>`;
+          popupContent = `<p>${locationName}</p><span>Tested positive ${covidCases}</span>`;
         }
         popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(mapboxGlMap);
       });
 
-      mapboxGlMap.on("mouseleave", "countiesSolidLayer", function () {
+      mapboxGlMap.on("mouseleave", "locationsSolidLayer", function () {
         mapboxGlMap.getCanvas().style.cursor = "";
         popup.remove();
         mapboxGlMap.setPaintProperty(
-          "county-highlight",
+          "location-highlight",
           "fill-color",
           "rgba(0,0,0,0)"
         );
@@ -146,20 +184,49 @@ export const MapboxGLMap = ({
       initMap();
     } else {
       if (selectedId) {
-        statefulMap.setPaintProperty("county-highlight", "fill-color", [
-          "case",
-          ["==", ["get", "COUNTY_NAM"], selectedId.county_name.toUpperCase()],
-          "rgba(46, 49, 49, 1)",
-          "rgba(0,0,0,0)",
-        ]);
+        !zipcodeMap
+          ? statefulMap.setPaintProperty("location-highlight", "fill-color", [
+              "case",
+              ["==", ["get", "COUNTY_NAM"], selectedId.county_name],
+              "rgba(46, 49, 49, 1)",
+              "rgba(0,0,0,0)",
+            ])
+          : statefulMap.setPaintProperty("zip-highlight", "line-color", [
+              "case",
+              ["==", ["get", "zip"], selectedId],
+              "rgba(46, 49, 49, 1)",
+              "rgba(0,0,0,0)",
+            ]);
+        statefulMap.on("sourcedata", function () {
+          if (
+            statefulMap.getSource("locations") &&
+            statefulMap.isSourceLoaded("locations") &&
+            previousSelectedId !== selectedId
+          ) {
+            let zipFeatures = statefulMap.querySourceFeatures("locations", {
+              sourceLayer: "locationsSolidLayer",
+              filter: ["==", ["get", "zip"], selectedId],
+            });
+            zipFeatures[0] && zipFeatures[0].geometry
+              ? (statefulMap.flyTo({
+                  center: [
+                    zipFeatures[0].geometry.coordinates[0][0][0],
+                    zipFeatures[0].geometry.coordinates[0][0][1],
+                  ],
+                  zoom: 9,
+                }),
+                (previousSelectedId = selectedId))
+              : "";
+          }
+        });
       } else {
         statefulMap.setPaintProperty(
-          "county-highlight",
+          "location-highlight",
           "fill-color",
           "rgba(0,0,0,0)"
         );
       }
-      if (!selectedId && (activeIndex || activeIndex === 0)) {
+      if (!selectedId || activeIndex || activeIndex === 0) {
         updateMap();
       }
     }
