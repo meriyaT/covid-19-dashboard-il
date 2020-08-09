@@ -5,7 +5,7 @@ import CountyTab from "./CountyTab";
 import StateTab from "./StateTab";
 
 const Tabs = ({ illinoisData, countyData, todayDate }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(2);
 
   const handleTabChange = (e, { activeIndex }) => setActiveIndex(activeIndex);
 
