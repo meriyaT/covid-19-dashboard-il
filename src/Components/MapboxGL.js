@@ -101,15 +101,17 @@ export const MapboxGLMap = ({
       });
 
       //Add a transperant color layer to highlight a county during mouseover event
-      mapboxGlMap.addLayer({
-        id: "zip-highlight",
-        source: "locations",
-        type: "line",
-        paint: {
-          "line-color": "rgba(103, 65, 114, 0)",
-          "line-width": 4,
-        },
-      });
+      if (zipcodeMap) {
+        mapboxGlMap.addLayer({
+          id: "zip-highlight",
+          source: "locations",
+          type: "line",
+          paint: {
+            "line-color": "rgba(103, 65, 114, 0)",
+            "line-width": 4,
+          },
+        });
+      }
 
       // Create a popup, but don't add it to the map yet.
       let popup = new mapboxgl.Popup({
@@ -187,7 +189,11 @@ export const MapboxGLMap = ({
         !zipcodeMap
           ? statefulMap.setPaintProperty("location-highlight", "fill-color", [
               "case",
-              ["==", ["get", "COUNTY_NAM"], selectedId.county_name],
+              [
+                "==",
+                ["get", "COUNTY_NAM"],
+                selectedId.county_name.toUpperCase(),
+              ],
               "rgba(46, 49, 49, 1)",
               "rgba(0,0,0,0)",
             ])
@@ -201,7 +207,8 @@ export const MapboxGLMap = ({
           if (
             statefulMap.getSource("locations") &&
             statefulMap.isSourceLoaded("locations") &&
-            previousSelectedId !== selectedId
+            previousSelectedId !== selectedId &&
+            zipcodeMap
           ) {
             let zipFeatures = statefulMap.querySourceFeatures("locations", {
               sourceLayer: "locationsSolidLayer",
