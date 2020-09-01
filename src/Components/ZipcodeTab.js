@@ -51,7 +51,7 @@ const ZipcodeTab = (todayDate) => {
     return d.date;
   };
   const infectedTodayAccessor = (d) =>
-    d.infected_today > 0 ? d.infected_today : 0;
+    parseInt(d.infected_today) > 0 ? parseInt(d.infected_today) : 0;
 
   const infectedTotalAccessor = (d) => d.infected_total;
 
